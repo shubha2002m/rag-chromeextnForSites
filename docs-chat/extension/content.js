@@ -1,0 +1,1 @@
+console.log("Docs Chat extension loaded.");
