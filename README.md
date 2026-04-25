@@ -1,4 +1,4 @@
-# SiteSage – AI-Powered Documentation Chat
+# AI-Powered Sites-Documentation ChatBot
 
 A Chrome extension that lets you ask questions about any documentation website in natural language. It crawls the site, indexes it with embeddings, and uses AI to answer your questions with source citations.
 
