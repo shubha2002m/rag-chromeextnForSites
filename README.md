@@ -124,6 +124,12 @@ Backend deletes ChromaDB collection
     ↓
 Next session starts fresh (must re-index)
 ```
+![alt text](<docs-chat/demoimages/Screenshot 2026-04-25 133504.png>)
+
+
+<video controls src="docs-chat/demoimages/anysitechat proj video.mp4" title="Title"></video>
+
+
 
 ---
 
