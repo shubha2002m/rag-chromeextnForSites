@@ -247,88 +247,6 @@ SKIP_PATTERNS = [
 
 ---
 
-## Shipping Checklist
-
-✅ **Ready for private/self-hosted use**
-
-- [x] Functional end-to-end (crawl → embed → query)
-- [x] Error handling and graceful fallbacks
-- [x] Rate limiting (0.5s delays on embeddings to avoid quota)
-- [x] Security: API key kept server-side, not in extension
-
-❌ **NOT ready for Chrome Web Store yet**
-
-- [ ] **No authentication** — anyone at localhost:8000 can crawl/query (add API key validation)
-- [ ] **No rate limiting per user** — vulnerable to abuse at scale (add per-IP limits)
-- [ ] **No privacy policy/terms** — Chrome Store requires data-handling disclosure
-- [ ] **Hardcoded backend URL** — must be configurable or hosted permanently
-- [ ] **No HTTPS** — localhost only; production needs TLS
-- [ ] **No monitoring/logging** — can't debug production issues
-- [ ] **No tests** — no unit/integration tests
-- [ ] **Permissions overly broad** — `<all_urls>` and storage could be refined
-
----
-
-## To Ship on Chrome Web Store
-
-1. **Add authentication:**
-   ```python
-   from fastapi import Header, HTTPException
-   
-   @app.post("/crawl")
-   async def crawl(req: CrawlRequest, x_api_key: str = Header(...)):
-       if x_api_key != os.getenv("API_KEY"):
-           raise HTTPException(status_code=401, detail="Unauthorized")
-       # ... crawl logic
-   ```
-
-2. **Deploy backend:** Docker + Cloud Run, Render, or Fly.io
-3. **Update extension:** Hardcode production backend URL
-4. **Add privacy policy:** Disclose data from crawled sites is embedded and stored temporarily
-5. **Add tests & CI/CD:** GitHub Actions to validate builds
-6. **Rate limiting:** Use a library like `slowapi` to limit requests per IP
-7. **Monitoring:** Add logging (e.g., GCP Logging, Sentry)
-
----
-
-## Dev Tips
-
-### Debug the Crawler
-
-```python
-# In crawler.py, increase logging
-print(f"Crawling: {url}")  # already there
-print(f"Found {len(all_links)} links")  # already there
-```
-
-### Inspect ChromaDB
-
-```python
-import chromadb
-
-client = chromadb.PersistentClient(path="./chroma_db")
-collection = client.get_or_create_collection("docs")
-
-# Count indexed chunks
-print(f"Total chunks: {collection.count()}")
-
-# Get all indexed URLs
-results = collection.get(limit=1000)
-urls = set([m["url"] for m in results["metadatas"]])
-for url in urls:
-    print(url)
-```
-
-### Test Queries Offline
-
-```bash
-curl -X POST http://localhost:8000/query \
-  -H "Content-Type: application/json" \
-  -d '{"question": "what is the products endpoint"}'
-```
-
----
-
 ## Troubleshooting
 
 | Issue | Fix |
@@ -338,12 +256,6 @@ curl -X POST http://localhost:8000/query \
 | "Backend not responding" | Check server is running: `http://localhost:8000/docs` |
 | "Assistant says 'not found'" | Try increasing chunks per page (see Customization) |
 | "Port 8000 already in use" | Use different port: `uvicorn main:app --port 8001` |
-
----
-
-## License
-
-MIT (modify as needed)
 
 ---
 
